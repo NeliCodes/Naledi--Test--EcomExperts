@@ -59,10 +59,47 @@
         class="disabled"
       {% endif %}
     >
-    <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-      {{ value -}}
-      <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
-    </label>
+    {% comment %}
+      {% if product.variants[forloop.index0].metafields.color.values and option.name == 'Color' %}
+      <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" style=" background-color: {{product.variants[forloop.index0].metafields.color.values}}"> 
+      </label>
+    {% else %}
+      <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+        {{ value }}
+      </label>
+    {% endif %}
+    {% endcomment %}
+    
+    {% comment %}
+  Variant selection dropdown with specific sizes for Dawn theme
+{% endcomment %}
+
+<label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+  
+{{ value }}
+// Reset the variant size selection to default "Unselected" 
+{% if variant.size == 'unselected' %}
+  <option value="">Unselected</option>
+{% endif %}
+</label>
+
+{% comment %}
+  code for when variant size was clicked and page is refreshed, sets default to "unselected"
+{% endcomment %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // Reset the variant selection to "Unselected" on page load
+  var variantSelect = document.getElementById('variant-{{ section.id }}');
+  if (variantSelect) {
+    variantSelect.value = "";
+  }
+
+  // Add your logic for handling variant changes
+  // ...
+});
+</script>
+
+    
   {%- elsif block.settings.picker_type == 'dropdown' -%}
     <option
       value="{{ value | escape }}"

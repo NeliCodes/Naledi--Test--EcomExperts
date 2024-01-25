@@ -35,6 +35,17 @@
         class="search-modal__content{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} search-modal__content-top{% else %} search-modal__content-bottom{% endif %}"
         tabindex="-1"
       >
+      {% comment %}
+        hide soft winter jacket
+      {% endcomment %}
+      {% for item in search.results %}
+        {% if item.object_type == 'product' %}
+          {% unless item.id == '8340378976477' %} 
+            <p>No items found for "{{ search.terms }}"</p>
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      
         {%- if settings.predictive_search_enabled -%}
           <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
         {%- else -%}

@@ -23,6 +23,76 @@
   <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 {%- endunless -%}
 
+{% comment %}
+ script for "Leather Bag""with black and medium variants, when bag is added to cart, "soft winter jacket"
+ is automatically added with an addition of $0.01
+{% endcomment %}
+<script>
+    //get the cart
+    let cart = $.getJSON('/cart.js');
+    // wait for the response
+    cart.done(function(){
+      //when you have the response, get the JSON and set items to cart.items
+      cart = cart.responseJSON;
+      let items = cart.items;
+      // make a boolean to make sure that the item you want to add isnt already in the cart (to keep the JS from firing again on page reload)
+      let item_in_cart_already = false;
+// product we are checking to see is in the cart (leather bag)
+      let item_in_cart_prod_id = 8340379173085;
+// the product we want to add's product id (soft winter jacket)
+      let item_to_add_prod_id = 8340378976477;
+// the product we want to add's variant id (Leather bag/Black/Medium)
+      let item_to_add_variant_id = 44496894623965;
+
+      //setting the function for the Shopify.addItem
+      Shopify.addItem = function(variant_id, qty, properties, callback) {
+  var qty = qty || 1;
+  var params = {
+    quantity: qty,
+    id: variant_id
+  }
+  if(properties != false){
+    params.properties = properties;
+  }
+  jQuery.ajax({
+    type: "POST",
+    url: "/cart/add.js",
+    data: params,
+    dataType: "json",
+    success: function(line_item) {
+      if ((typeof callback) === 'function') {
+        callback(line_item);
+      } else {
+        Shopify.onItemAdded(line_item);
+      }
+    },
+    error: function(XMLHttpRequest, textStatus) {
+      Shopify.onError(XMLHttpRequest, textStatus);
+    }
+  });
+};
+//check the cart items and set boolean to true if the item is in the cart
+      for(var i = 0; i < items.length; i++){
+        if (items[i].product_id == item_to_add_prod_id){
+          item_in_cart_already = true;
+        }
+      }
+      //then loop through cart items again and if the item isnt in the cart, and the corresponding product is found
+      //add it to the cart with the same quantity as the other product.
+      if(!item_in_cart_already){
+        for(var i = 0; i < items.length; i++){
+          if (items[i].product_id == item_in_cart_prod_id){
+            let variant_quantity = items[i].quantity;
+            Shopify.addItem(item_to_add_variant_id, variant_quantity);
+            setTimeout(function(){
+              location.reload();
+            },1000)
+          }
+        }
+      }
+    })    
+  </script>
+
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
 
 <cart-items class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">

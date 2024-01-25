@@ -231,6 +231,10 @@
                       </span>
                       {% render 'icon-minus' %}
                     </button>
+                    {% comment %}
+                      metafield to add the quantity of item to 5(bulk) of soft winter jacket
+                    {% endcomment %}
+                    
                     <input
                       class="quantity__input"
                       type="number"
@@ -238,13 +242,9 @@
                       id="Quantity-{{ section.id }}"
                       data-cart-quantity="{{ cart_qty }}"
                       data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
-                      min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
-                      {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
-                        data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
-                        max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
-                      {% endif %}
+                      min='{{  product.metafields.custom.bulkbuy }}'
                       step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
-                      value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                      value="{{  product.metafields.custom.bulkbuy }}"
                       form="{{ product_form_id }}"
                     />
                     <button class="quantity__button no-js-hidden" name="plus" type="button">

@@ -958,6 +958,7 @@ class VariantSelects extends HTMLElement {
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
+    this.filterImgVariant();
 
     if (!this.currentVariant) {
       this.toggleAddButton(true, '', true);
@@ -970,7 +971,16 @@ class VariantSelects extends HTMLElement {
       this.updateShareUrl();
     }
   }
-
+  filterImgVariant() {
+    if(this.currentVariant.featured_media && this.currentVariant.featured_media.alt) {
+        document.querySelectorAll('[thumbnail-alt]').forEach(img => img.style.display = 'none')
+        const currentImgAlt = this.currentVariant.featured_media.alt
+        const thumbnailSelector = `[thumbnail-alt = '${currentImgAlt}']`
+        document.querySelectorAll(thumbnailSelector).forEach(img => img.style.display = 'block')
+    } else {
+        document.querySelectorAll('[thumbnail-alt]').forEach(img => img.style.display = 'block')
+    }
+  } 
   updateOptions() {
     this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
   }
